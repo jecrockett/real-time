@@ -1,0 +1,7 @@
+.new-poll {
+  display: none;
+}
+
+.poll-options input {
+  display: block;
+}

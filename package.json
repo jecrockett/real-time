@@ -1,0 +1,32 @@
+{
+  "name": "real-time",
+  "version": "1.0.0",
+  "description": "An app to create polls and submit votes",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jecrockett/real-time.git"
+  },
+  "author": "James Crockett",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jecrockett/real-time/issues"
+  },
+  "homepage": "https://github.com/jecrockett/real-time#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.1",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.5",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "request": "^2.72.0"
+  }
+}
