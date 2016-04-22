@@ -1,10 +1,10 @@
 .new-poll {
   display: none;
 }
-/*
+
 .new-links {
   display: none;
-}*/
+}
 
 .poll-options input {
   display: block;

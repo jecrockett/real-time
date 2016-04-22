@@ -27,6 +27,19 @@ app.get('/polls/:id', (request, response) => {
   response.render('public-poll');
 });
 
+app.get('/polls/:voteId/:adminId', (request, response) => {
+  var voteId = request.params.voteId;
+  var adminId = request.params.adminId;
+  var pollData = polls[voteId];
+
+  if (pollData.adminId === adminId) {
+    response.render('admin-poll');
+  } else {
+    response.sendStatus(404);
+  }
+
+});
+
 // SERVER //
 
 if (!module.parent) {
@@ -58,10 +71,11 @@ io.on('connection', function (socket) {
     if (channel === 'newPoll') {
       var voteId = generateId(3);
       var adminId = generateId(3);
+      message.adminId = adminId;
       polls[voteId] = message;
       // function to generate link for admin view
       var adminLink = function() {
-        return `http://localhost:3000/polls/${adminId}`;
+        return `http://localhost:3000/polls/${voteId}/${adminId}`;
       };
       // function to generate link in public view
       var voterLink = function() {
@@ -74,9 +88,9 @@ io.on('connection', function (socket) {
     if (channel === 'newVote') {
       polls[message.voteId].votes[message.voterId] = message.content;
 
-      // polls[socket.id] = message;
+      console.log(polls);
       var time = new Date();
-      socket.emit('yourVote', {vote: message, time: time.toLocaleString() });
+      socket.emit('yourVote', {vote: message.content, time: time.toLocaleString() });
       // socket.emit('voteStatus', countVotes(polls));
     }
   });

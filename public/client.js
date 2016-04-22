@@ -58,8 +58,7 @@ $('#add-another-option').on('click', function() {
 });
 
 $('#create-new-poll').on('click', () => {
-  let pollData = {question: '', options: [], votes: {} };
-
+  let pollData = {question: '', options: [], adminId: '', votes: {} };
 
   pollData.question = $('.poll-question input').val();
   $('.poll-options input').each(function() {
