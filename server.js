@@ -41,11 +41,11 @@ if (!module.parent) {
   module.exports = app;
 }
 
-function loggit() {
-  console.log(polls);
-  setTimeout(loggit, 1000);
-}
-loggit();
+// function loggit() {
+//   console.log(polls);
+//   setTimeout(loggit, 1000);
+// }
+// loggit();
 // WEBSOCKETS //
 
 const socketIo = require('socket.io');
@@ -57,13 +57,18 @@ io.on('connection', function (socket) {
   socket.on('message', (channel, message) => {
     if (channel === 'newPoll') {
       var voteId = generateId(3);
+      var adminId = generateId(3);
       polls[voteId] = message;
-      console.log(polls);
       // function to generate link for admin view
+      var adminLink = function() {
+        return `http://localhost:3000/polls/${adminId}`;
+      };
       // function to generate link in public view
+      var voterLink = function() {
+        return `http://localhost:3000/polls/${voteId}`;
+      };
       // save the above into variables, send message back with those
-      // display links on page
-      // display link on page to "see my new poll"
+      socket.emit('links', { admin: adminLink(), voter: voterLink() });
     }
 
     if (channel === 'newVote') {

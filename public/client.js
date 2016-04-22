@@ -28,11 +28,19 @@ socket.on('yourVote', (info) => {
   yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
 });
 
+socket.on('links', (links) => {
+  $('#admin-link')[0].innerText = links.admin;
+  $('#voter-link')[0].innerText = links.voter;
+
+  $('.new-poll').slideUp();
+  $('.new-links').slideDown();
+});
+
 function sendVote() {
   var pollID = document.location.href.split('/')[4];
-  let voterId = getCookie('voterId');
+  // let voterId = getCookie('voterId');
 
-  socket.send('newVote', {voteId: pollID, voterId: voterId, content: this.innerText});
+  socket.send('newVote', {voteId: pollID, voterId: socket.id, content: this.innerText});
 }
 
 function appendVote(option, index) {
