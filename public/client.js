@@ -28,8 +28,26 @@ socket.on('yourVote', (info) => {
   yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
 });
 
+socket.on('updatedVote', (info) => {
+  if (info.pollId === document.location.href.split('/')[4]) {
+    $('#vote-status ul').empty();
+
+    Object.keys(info.votes).forEach(function(option, index) {
+      $('#vote-status ul').append(`<li>${option}: ${info.votes[option]}</li>`);
+    });
+  }
+
+});
+
 socket.on('pollDeactivated', (message) => {
   statusMessage.innerText = message;
+});
+
+socket.on('deactivation', (deactivatedPoll) => {
+  if (deactivatedPoll.id === document.location.href.split('/')[4]) {
+    $('#choices').empty();
+    $('#choices').append("<p>Voting for this poll has closed.</p>");
+  }
 });
 
 socket.on('links', (links) => {

@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
     if (channel === 'newPoll') {
       var pollId = generateId(3);
       var adminId = generateId(3);
-      var newPoll = new Poll(message.question, message.options, adminId);
+      var newPoll = new Poll(message.question, message.options, pollId, adminId);
 
       polls[pollId] = newPoll;
       // function to generate link for admin view
@@ -91,16 +91,19 @@ io.on('connection', function (socket) {
     }
 
     if (channel === 'newVote') {
-      polls[message.pollId].votes[message.voterId] = message.content;
+      var poll = polls[message.pollId];
+      poll.votes[message.voterId] = message.content;
 
       var time = new Date();
       socket.emit('yourVote', {vote: message.content, time: time.toLocaleString() });
+      io.sockets.emit('updatedVote', {pollId: poll.id, votes: poll.countVotes(poll.options, poll.votes) });
     }
 
     if (channel === 'deactivatePoll') {
       var poll = polls[message];
       poll.active = false;
       socket.emit('pollDeactivated', "Poll deactivated");
+      io.sockets.emit('deactivation', poll);
     }
   });
 
