@@ -24,7 +24,9 @@ app.get('/polls/:id', (request, response) => {
     var voterId = generateId(10);
     response.cookie('voterId', voterId);
   }
-  response.render('public-poll');
+
+  var pollData = polls[request.params.id];
+  response.render('public-poll', { pollData: pollData });
 });
 
 app.get('/polls/:voteId/:adminId', (request, response) => {

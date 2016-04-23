@@ -12,10 +12,9 @@
     <div id="your-vote"></div>
 
     <div id="choices">
-      <button>A</button>
-      <button>B</button>
-      <button>C</button>
-      <button>D</button>
+      <% pollData.options.forEach(function(option, index) { %>
+        <button><%= option %></button>
+      <% }); %>
     </div>
 
     <ul id="vote-status"></ul>
