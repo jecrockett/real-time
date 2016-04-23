@@ -28,6 +28,10 @@ socket.on('yourVote', (info) => {
   yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
 });
 
+socket.on('pollDeactivated', (message) => {
+  statusMessage.innerText = message;
+});
+
 socket.on('links', (links) => {
   $('#admin-link')[0].innerText = links.admin;
   $('#voter-link')[0].innerText = links.voter;
@@ -54,7 +58,7 @@ $('#create-poll').on('click', function() {
 });
 
 $('#deactivate-poll').on('click', function() {
-  var pollID = document.location.href.split('/')[4];
+  var pollId = document.location.href.split('/')[4];
   socket.send('deactivatePoll', pollId );
 });
 

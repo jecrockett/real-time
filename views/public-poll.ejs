@@ -12,12 +12,24 @@
     <div id="your-vote"></div>
 
     <div id="choices">
-      <% pollData.options.forEach(function(option, index) { %>
-        <button><%= option %></button>
-      <% }); %>
+      <% if(pollData.active) { %>
+        <% pollData.options.forEach(function(option, index) { %>
+          <button><%= option %></button>
+        <% }); %>
+      <% } else { %>
+        <p>Looks like you missed your shot.</p>
+        <p>Voting for this poll has closed.</p>
+      <% } %>
     </div>
 
-    <ul id="vote-status"></ul>
+    <div id="vote-status">
+      <p>Topic: <%= pollData.question %></p>
+      <ul>
+        <% Object.keys(votes).forEach(function(option, index) { %>
+          <li><%= option %>: <%= votes[option] %></li>
+        <% }); %>
+      </ul>
+    </div>
 
     <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>

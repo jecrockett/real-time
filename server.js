@@ -26,7 +26,8 @@ app.get('/polls/:id', (request, response) => {
   }
 
   var pollData = polls[request.params.id];
-  response.render('public-poll', { pollData: pollData });
+
+  response.render('public-poll', { pollData: pollData, votes: pollData.countVotes(pollData.options, pollData.votes)});
 });
 
 app.get('/polls/:voteId/:adminId', (request, response) => {
@@ -97,8 +98,9 @@ io.on('connection', function (socket) {
     }
 
     if (channel === 'deactivatePoll') {
-      // find poll from pollID
-      // change active attribute to false
+      var poll = polls[message];
+      poll.active = false;
+      socket.emit('pollDeactivated', "Poll deactivated");
     }
   });
 
