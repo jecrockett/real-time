@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>Always Poll Out</title>
+      <link rel="stylesheet" type='text/css' href="/style.css">
+  </head>
+  <body>
+
+    <h1>Always Poll Out</h1>
+
+    <div>
+      <a id='create-poll' href="#">Create A Poll</a>
+    </div>
+
+    <div class="new-poll">
+      <h4>Add a Question:</h4>
+      <div class="poll-question">
+        <input type="text" placeholder="Add your question for polling.">
+      </div>
+
+      <h4>Add Answer Options:</h4>
+      <div class="poll-options">
+        <input type="text" name="option1" placeholder="Add the first possible answer">
+        <input type="text" name="option2" placeholder="Add another possible answer">
+      </div>
+      <a id='add-another-option' href="#">Add Another Option</a>
+
+      <a id='create-new-poll' href="#">Create Poll</a>
+    </div>
+
+    <div class="new-links">
+      <h4>Here's your admin link:</h4>
+      <p id="admin-link"></p>
+      <h4>And you can send this one to the voters:</h4>
+      <p id="voter-link"></p>
+    </div>
+
+
+    <!-- SCRIPTS -->
+    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+  </body>
+</html>

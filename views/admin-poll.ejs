@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Always Poll Out</title>
+    <link rel="stylesheet" type='text/css' href="/style.css">
+</head>
+  <body>
+    <h1>admin page bitchezz</h1>
+    <div id="status-message"></div>
+    <div id="connection-count"></div>
+    <div id="vote-status">
+      <p>Topic: <%= pollData.question %></p>
+      <ul>
+        <% Object.keys(votes).forEach(function(option, index) { %>
+          <li><%= option %>: <%= votes[option] %></li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+
+  </body>
+</html>

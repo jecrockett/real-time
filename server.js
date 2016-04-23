@@ -1,8 +1,6 @@
 // APP //
 
 const express = require('express');
-const Handlebars = require('handlebars');
-const exphbs = require('express-handlebars');
 const app = express();
 const generateId = require('./lib/generate-id');
 const cookieParser = require('cookie-parser');
@@ -10,8 +8,7 @@ const cookieParser = require('cookie-parser');
 app.set('port', process.env.PORT || 3000);
 app.use(express.static('public'));
 app.use(cookieParser());
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
+app.set('view engine', 'ejs');
 app.set('polls', {});
 var polls = app.get('polls');
 
@@ -29,16 +26,15 @@ app.get('/polls/:id', (request, response) => {
 });
 
 app.get('/polls/:voteId/:adminId', (request, response) => {
-  var voteId = request.params.voteId;
   var adminId = request.params.adminId;
+  var voteId = request.params.voteId;
   var pollData = polls[voteId];
 
+  console.log(pollData.votes);
+  console.log(countVotes(pollData.votes));
+
   if (pollData.adminId === adminId) {
-    response.render('admin-poll', {
-      helpers: {
-        pollData: function() { return countVotes(pollData.votes); }
-      }
-    });
+    response.render('admin-poll', { pollData: pollData, votes: countVotes(pollData.votes) } );
   } else {
     response.sendStatus(404);
   }
@@ -59,11 +55,11 @@ if (!module.parent) {
   module.exports = app;
 }
 
-// function loggit() {
-//   console.log(polls);
-//   setTimeout(loggit, 1000);
-// }
-// loggit();
+function loggit(thing) {
+  console.log(thing);
+  setTimeout(loggit(thing), 1000);
+}
+
 // WEBSOCKETS //
 
 const socketIo = require('socket.io');
@@ -108,13 +104,6 @@ io.on('connection', function (socket) {
 
 // HELPERS //
 
-Handlebars.registerHelper('list', function(votes) {
-  a = "<div>";
-  a = a + Object.keys(votes).forEach(appendVote.bind(votes));
-  a = a + "</div>";
-  return a;
-});
-
 function appendVote(option, index) {
   return `<p>${option}: ${this[option]}</p>`;
 }
@@ -126,7 +115,7 @@ function countVotes(votes) {
     if (voteCount[votes[vote]]) {
       voteCount[votes[vote]]++;
     } else {
-        voteCount[votes[vote]] = 1;
+      voteCount[votes[vote]] = 1;
     }
   }
   return voteCount;
