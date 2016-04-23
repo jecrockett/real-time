@@ -85,9 +85,11 @@ $('#add-another-option').on('click', function() {
 });
 
 $('#create-new-poll').on('click', () => {
-  let pollData = {question: '', options: [] };
+  let pollData = { options: [] };
 
   pollData.question = $('.poll-question input').val();
+  pollData.shareResults = ($('share-results input').is(":checked"));
+
   $('.poll-options input').each(function() {
     pollData.options.push($(this).val());
   });

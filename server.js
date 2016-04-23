@@ -27,7 +27,11 @@ app.get('/polls/:id', (request, response) => {
 
   var pollData = polls[request.params.id];
 
-  response.render('public-poll', { pollData: pollData, votes: pollData.countVotes(pollData.options, pollData.votes)});
+  if (pollData.shareResults) {
+    response.render('public-poll', { pollData: pollData, votes: pollData.countVotes(pollData.options, pollData.votes)});
+  } else {
+    response.render('public-poll', { pollData: pollData, votes: {"Note": "The vote administrator has elected to keep the results private."} });
+  }
 });
 
 app.get('/polls/:voteId/:adminId', (request, response) => {
@@ -75,7 +79,7 @@ io.on('connection', function (socket) {
     if (channel === 'newPoll') {
       var pollId = generateId(3);
       var adminId = generateId(3);
-      var newPoll = new Poll(message.question, message.options, pollId, adminId);
+      var newPoll = new Poll(message.question, message.options, pollId, adminId, message.shareResults);
 
       polls[pollId] = newPoll;
       // function to generate link for admin view
