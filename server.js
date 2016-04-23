@@ -1,6 +1,7 @@
 // APP //
 
 const express = require('express');
+const Handlebars = require('handlebars');
 const exphbs = require('express-handlebars');
 const app = express();
 const generateId = require('./lib/generate-id');
@@ -33,7 +34,11 @@ app.get('/polls/:voteId/:adminId', (request, response) => {
   var pollData = polls[voteId];
 
   if (pollData.adminId === adminId) {
-    response.render('admin-poll');
+    response.render('admin-poll', {
+      helpers: {
+        pollData: function() { return countVotes(pollData.votes); }
+      }
+    });
   } else {
     response.sendStatus(404);
   }
@@ -100,15 +105,29 @@ io.on('connection', function (socket) {
   });
 });
 
+
+// HELPERS //
+
+Handlebars.registerHelper('list', function(votes) {
+  a = "<div>";
+  a = a + Object.keys(votes).forEach(appendVote.bind(votes));
+  a = a + "</div>";
+  return a;
+});
+
+function appendVote(option, index) {
+  return `<p>${option}: ${this[option]}</p>`;
+}
+
 function countVotes(votes) {
-var voteCount = {
-    A: 0,
-    B: 0,
-    C: 0,
-    D: 0
-};
+  var voteCount = {};
+
   for (var vote in votes) {
-    voteCount[votes[vote]]++;
+    if (voteCount[votes[vote]]) {
+      voteCount[votes[vote]]++;
+    } else {
+        voteCount[votes[vote]] = 1;
+    }
   }
   return voteCount;
 }

@@ -8,7 +8,7 @@
     <div id="status-message"></div>
     <div id="connection-count"></div>
 
-    <ul id="vote-status"></ul>
+    <div id="vote-status">{{#list}}{{pollData}}{{/list}}</div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>
