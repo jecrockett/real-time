@@ -40,7 +40,7 @@ function sendVote() {
   var pollID = document.location.href.split('/')[4];
   // let voterId = getCookie('voterId');
 
-  socket.send('newVote', {voteId: pollID, voterId: socket.id, content: this.innerText});
+  socket.send('newVote', {pollId: pollID, voterId: socket.id, content: this.innerText});
 }
 
 function appendVote(option, index) {
@@ -53,12 +53,17 @@ $('#create-poll').on('click', function() {
   $('.new-poll').slideDown();
 });
 
+$('#deactivate-poll').on('click', function() {
+  var pollID = document.location.href.split('/')[4];
+  socket.send('deactivatePoll', pollId );
+});
+
 $('#add-another-option').on('click', function() {
   $('.poll-options').append('<input type="text" placeholder="Add another possible answer">');
 });
 
 $('#create-new-poll').on('click', () => {
-  let pollData = {question: '', options: [], adminId: '', votes: {} };
+  let pollData = {question: '', options: [] };
 
   pollData.question = $('.poll-question input').val();
   $('.poll-options input').each(function() {

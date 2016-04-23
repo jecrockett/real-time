@@ -10,6 +10,7 @@
     <div id="status-message"></div>
     <div id="connection-count"></div>
     <div id="vote-status">
+      <a id="deactivate-poll" href="#"></a>
       <p>Topic: <%= pollData.question %></p>
       <ul>
         <% Object.keys(votes).forEach(function(option, index) { %>
