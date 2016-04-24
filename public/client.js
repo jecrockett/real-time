@@ -10,8 +10,8 @@ $(document).ready(function() {
 
   //===== HOME =====//
   socket.on('links', (links) => {
-    $('#admin-link')[0].innerText = links.admin;
-    $('#voter-link')[0].innerText = links.voter;
+    $('#admin-link').html(links.admin);
+    $('#voter-link').html(links.voter);
 
     $('.new-poll').slideUp();
     $('.new-poll').promise().done(function() {
@@ -40,8 +40,8 @@ $(document).ready(function() {
 
   socket.on('deactivation', (deactivatedPoll) => {
     if (deactivatedPoll.id === currentPoll) {
-      $('#choices').empty();
-      $('#choices').append("<p>Voting for this poll has closed.</p>");
+      $('#choices').empty()
+                   .append("<p>Voting for this poll has closed.</p>");
     }
   });
 
@@ -129,8 +129,8 @@ $(document).ready(function() {
 
   //===== VOTER PAGE =====//
   function sendVote() {
-    // let voterId = getCookie('voterId');
-    socket.send('newVote', {pollId: currentPoll, voterId: socket.id, content: this.innerText});
+    let voterId = getCookie('voterId');
+    socket.send('newVote', {pollId: currentPoll, voterId: voterId, content: this.innerText});
   }
 
   function getCookie(name) {
