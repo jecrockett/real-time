@@ -8,7 +8,7 @@ const Poll = require('./lib/poll');
 
 
 app.set('port', process.env.PORT || 3000);
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('polls', {});
@@ -128,6 +128,12 @@ io.on('connection', function (socket) {
       pollToDeactivate.active = false;
       socket.emit('pollDeactivated', "Poll deactivated");
       io.sockets.emit('deactivation', pollToDeactivate);
+    }
+
+    if (channel === 'updateDeadline') {
+      var pollToUpdate = polls[message.pollId];
+      pollToUpdate.expiration = new Date(message.expiration).getTime();
+      socket.emit('confirmDeadline', `The deadline is now ${ new Date(pollToUpdate.expiration).toLocaleString() }.`);
     }
   });
 

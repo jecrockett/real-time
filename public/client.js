@@ -1,36 +1,47 @@
-const socket = io();
-
 $(document).ready(function() {
-  var connectionCount = document.getElementById('connection-count');
-  var statusMessage = document.getElementById('status-message');
-  var sorryMessage = document.getElementById('sorry-message');
-  var voteStatus = document.getElementById('vote-status');
-  var yourVote = document.getElementById('your-vote');
+  const socket = io();
+
   var buttons = document.querySelectorAll('#choices button');
+  var currentPoll = document.location.href.split('/')[4];
 
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', sendVote);
   }
 
-  socket.on('usersConnected', (count) => {
-    connectionCount.innerText = 'Connected Users: ' + count;
-  });
+  function sendVote() {
+    var pollID = document.location.href.split('/')[4];
+    // let voterId = getCookie('voterId');
+    socket.send('newVote', {pollId: pollID, voterId: socket.id, content: this.innerText});
+  }
 
-  socket.on('statusMessage', (message) => {
-    statusMessage.innerText = message;
+  function appendVote(option, index) {
+    let newElem = document.createElement("li");
+    newElem.innerHTML = option + ": " + this[option];
+    voteStatus.appendChild(newElem);
+  }
+
+
+
+
+
+
+
+  socket.on('confirmDeadline', (message) => {
+    $('#time-selector-container').slideUp();
+    $('#expiration-message').html(message);
   });
 
   socket.on('voteStatus', (votes) => {
-    voteStatus.innerHTML = '';
+    $('#vote-status').empty();
     Object.keys(votes).forEach(appendVote.bind(votes));
   });
 
   socket.on('yourVote', (info) => {
-    yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
+    $('#your-vote').html(`You voted for ${info.vote} (${info.time})`);
   });
 
   socket.on('tooLate', (info) => {
-    sorryMessage.innerText = info;
+    $('#sorry-message').html(info);
   });
 
   socket.on('updatedVote', (info) => {
@@ -60,23 +71,22 @@ $(document).ready(function() {
     $('#voter-link')[0].innerText = links.voter;
 
     $('.new-poll').slideUp();
-    $('.new-links').slideDown();
+    $('.new-poll').promise().done(function() {
+      $('.new-links').slideDown();
+    });
   });
 
-  function sendVote() {
-    var pollID = document.location.href.split('/')[4];
-    // let voterId = getCookie('voterId');
 
-    socket.send('newVote', {pollId: pollID, voterId: socket.id, content: this.innerText});
-  }
 
-  function appendVote(option, index) {
-    let newElem = document.createElement("li");
-    newElem.innerHTML = option + ": " + this[option];
-    voteStatus.appendChild(newElem);
-  }
+
+
+
+
+
+
 
   $('#create-poll').on('click', function() {
+    $('.new-links').fadeOut();
     $('.new-poll').slideDown();
   });
 
@@ -96,6 +106,17 @@ $(document).ready(function() {
     } else {
       $container.slideUp();
     }
+  });
+
+  $('#set-new-deadline').on('click', function() {
+    $('#time-selector-container').slideToggle();
+  });
+
+  $('#submit-new-expiration').on('click', function() {
+    var pollId = document.location.href.split('/')[4];
+    let expiration = $('#time-selector').val();
+    console.log(pollId, expiration);
+    socket.send('updateDeadline', {pollId: pollId, expiration: expiration});
   });
 
   $('#create-new-poll').on('click', () => {
@@ -119,6 +140,8 @@ $(document).ready(function() {
 
     socket.send('newPoll', pollData);
   });
+
+
 
   // HELPERS //
   function getCookie(name) {

@@ -4,13 +4,30 @@
     <meta charset="utf-8">
     <title>Always Poll Out</title>
     <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../../jquery.simple-dtpicker.js"></script>
+    <link type="text/css" href="../../jquery.simple-dtpicker.css" rel="stylesheet" />
+    <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" type='text/css' href="/style.css">
 </head>
   <body>
     <h1>admin page bitchezz</h1>
     <div id="status-message"></div>
     <div id="connection-count"></div>
-    <a id="deactivate-poll" href="#">Deactivate Poll</a>
+    <div id="expiration-message">
+      <% if(pollData.expiration) { %>
+        <% var date = new Date(pollData.expiration) %>
+          <%= `Voting for this poll will close at ${date.toLocaleString()}` %>
+      <% } else { %>
+          There is no current deadling for accepting votes.
+      <% } %>
+    </div>
+
+    </div>
+    <a id="deactivate-poll" href="#">Deactivate Poll Now</a>
+    <a id="set-new-deadline" href="#">Set Deadline</a>
+    <div id="time-selector-container">
+      <span>Select an expiration time (24hr Format): </span><input id="time-selector" type="text"><a href="#" id="submit-new-expiration">Submit</a>
+    </div>
 
     <div id="vote-status">
       <p>Topic: <%= pollData.question %></p>
@@ -21,8 +38,6 @@
       </ul>
     </div>
 
-    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>
     <script>$('#time-selector').appendDtpicker({
       "minuteInterval": 15,
