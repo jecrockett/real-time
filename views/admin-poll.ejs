@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Always Poll Out</title>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type='text/css' href="/style.css">
 </head>
   <body>
@@ -10,6 +11,7 @@
     <div id="status-message"></div>
     <div id="connection-count"></div>
     <a id="deactivate-poll" href="#">Deactivate Poll</a>
+
     <div id="vote-status">
       <p>Topic: <%= pollData.question %></p>
       <ul>
@@ -22,6 +24,11 @@
     <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>
+    <script>$('#time-selector').appendDtpicker({
+      "minuteInterval": 15,
+      "amPmInTimeList": true,
+      "futureOnly": true
+    });</script>
 
   </body>
 </html>

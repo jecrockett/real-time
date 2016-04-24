@@ -79,7 +79,15 @@ io.on('connection', function (socket) {
     if (channel === 'newPoll') {
       var pollId = generateId(3);
       var adminId = generateId(3);
-      var newPoll = new Poll(message.question, message.options, pollId, adminId, message.shareResults);
+
+      var expiration;
+      if (message.expiration) {
+        expiration = new Date(message.expiration).getTime();
+      } else {
+        expiration = null;
+      }
+
+      var newPoll = new Poll(message.question, message.options, pollId, adminId, message.shareResults, expiration);
 
       polls[pollId] = newPoll;
       // function to generate link for admin view
@@ -96,18 +104,30 @@ io.on('connection', function (socket) {
 
     if (channel === 'newVote') {
       var poll = polls[message.pollId];
-      poll.votes[message.voterId] = message.content;
 
-      var time = new Date();
-      socket.emit('yourVote', {vote: message.content, time: time.toLocaleString() });
-      io.sockets.emit('updatedVote', {pollId: poll.id, votes: poll.countVotes(poll.options, poll.votes) });
+      if (!poll.expiration || poll.expiration > Date.now()) {
+        poll.votes[message.voterId] = message.content;
+
+        var time = new Date();
+        socket.emit('yourVote', {vote: message.content, time: time.toLocaleString() });
+        console.log(poll.shareResults);
+        if (poll.shareResults) {
+          io.sockets.emit('updatedVote', {pollId: poll.id, votes: poll.countVotes(poll.options, poll.votes) });
+        } else {
+          io.sockets.emit('updatedVote', {pollId: poll.id, votes: {"Note": "The vote administrator has elected to keep the results private."}});
+        }
+
+      } else {
+        var closingTime = new Date(poll.expiration);
+        socket.emit('tooLate', `Sorry, this poll closed at ${closingTime.toLocaleString() }` );
+      }
     }
 
     if (channel === 'deactivatePoll') {
-      var poll = polls[message];
-      poll.active = false;
+      var pollToDeactivate = polls[message];
+      pollToDeactivate.active = false;
       socket.emit('pollDeactivated', "Poll deactivated");
-      io.sockets.emit('deactivation', poll);
+      io.sockets.emit('deactivation', pollToDeactivate);
     }
   });
 

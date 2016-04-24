@@ -1,105 +1,129 @@
 const socket = io();
 
-var connectionCount = document.getElementById('connection-count');
-var statusMessage = document.getElementById('status-message');
-var voteStatus = document.getElementById('vote-status');
-var yourVote = document.getElementById('your-vote');
-var buttons = document.querySelectorAll('#choices button');
+$(document).ready(function() {
+  var connectionCount = document.getElementById('connection-count');
+  var statusMessage = document.getElementById('status-message');
+  var sorryMessage = document.getElementById('sorry-message');
+  var voteStatus = document.getElementById('vote-status');
+  var yourVote = document.getElementById('your-vote');
+  var buttons = document.querySelectorAll('#choices button');
 
-
-for (var i = 0; i < buttons.length; i++) {
-  buttons[i].addEventListener('click', sendVote);
-}
-
-socket.on('usersConnected', (count) => {
-  connectionCount.innerText = 'Connected Users: ' + count;
-});
-
-socket.on('statusMessage', (message) => {
-  statusMessage.innerText = message;
-});
-
-socket.on('voteStatus', (votes) => {
-  voteStatus.innerHTML = '';
-  Object.keys(votes).forEach(appendVote.bind(votes));
-});
-
-socket.on('yourVote', (info) => {
-  yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
-});
-
-socket.on('updatedVote', (info) => {
-  if (info.pollId === document.location.href.split('/')[4]) {
-    $('#vote-status ul').empty();
-
-    Object.keys(info.votes).forEach(function(option, index) {
-      $('#vote-status ul').append(`<li>${option}: ${info.votes[option]}</li>`);
-    });
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', sendVote);
   }
 
-});
-
-socket.on('pollDeactivated', (message) => {
-  statusMessage.innerText = message;
-});
-
-socket.on('deactivation', (deactivatedPoll) => {
-  if (deactivatedPoll.id === document.location.href.split('/')[4]) {
-    $('#choices').empty();
-    $('#choices').append("<p>Voting for this poll has closed.</p>");
-  }
-});
-
-socket.on('links', (links) => {
-  $('#admin-link')[0].innerText = links.admin;
-  $('#voter-link')[0].innerText = links.voter;
-
-  $('.new-poll').slideUp();
-  $('.new-links').slideDown();
-});
-
-function sendVote() {
-  var pollID = document.location.href.split('/')[4];
-  // let voterId = getCookie('voterId');
-
-  socket.send('newVote', {pollId: pollID, voterId: socket.id, content: this.innerText});
-}
-
-function appendVote(option, index) {
-  let newElem = document.createElement("li");
-  newElem.innerHTML = option + ": " + this[option];
-  voteStatus.appendChild(newElem);
-}
-
-$('#create-poll').on('click', function() {
-  $('.new-poll').slideDown();
-});
-
-$('#deactivate-poll').on('click', function() {
-  var pollId = document.location.href.split('/')[4];
-  socket.send('deactivatePoll', pollId );
-});
-
-$('#add-another-option').on('click', function() {
-  $('.poll-options').append('<input type="text" placeholder="Add another possible answer">');
-});
-
-$('#create-new-poll').on('click', () => {
-  let pollData = { options: [] };
-
-  pollData.question = $('.poll-question input').val();
-  pollData.shareResults = ($('share-results input').is(":checked"));
-
-  $('.poll-options input').each(function() {
-    pollData.options.push($(this).val());
+  socket.on('usersConnected', (count) => {
+    connectionCount.innerText = 'Connected Users: ' + count;
   });
 
-  socket.send('newPoll', pollData);
-});
+  socket.on('statusMessage', (message) => {
+    statusMessage.innerText = message;
+  });
 
-// HELPERS //
-function getCookie(name) {
-  var value = "; " + document.cookie;
-  var parts = value.split("; " + name + "=");
-  if (parts.length == 2) return parts.pop().split(";").shift();
-}
+  socket.on('voteStatus', (votes) => {
+    voteStatus.innerHTML = '';
+    Object.keys(votes).forEach(appendVote.bind(votes));
+  });
+
+  socket.on('yourVote', (info) => {
+    yourVote.innerText = `You voted for ${info.vote} at ${info.time}.`;
+  });
+
+  socket.on('tooLate', (info) => {
+    sorryMessage.innerText = info;
+  });
+
+  socket.on('updatedVote', (info) => {
+    if (info.pollId === document.location.href.split('/')[4]) {
+      $('#vote-status ul').empty();
+
+      Object.keys(info.votes).forEach(function(option, index) {
+        $('#vote-status ul').append(`<li>${option}: ${info.votes[option]}</li>`);
+      });
+    }
+
+  });
+
+  socket.on('pollDeactivated', (message) => {
+    statusMessage.innerText = message;
+  });
+
+  socket.on('deactivation', (deactivatedPoll) => {
+    if (deactivatedPoll.id === document.location.href.split('/')[4]) {
+      $('#choices').empty();
+      $('#choices').append("<p>Voting for this poll has closed.</p>");
+    }
+  });
+
+  socket.on('links', (links) => {
+    $('#admin-link')[0].innerText = links.admin;
+    $('#voter-link')[0].innerText = links.voter;
+
+    $('.new-poll').slideUp();
+    $('.new-links').slideDown();
+  });
+
+  function sendVote() {
+    var pollID = document.location.href.split('/')[4];
+    // let voterId = getCookie('voterId');
+
+    socket.send('newVote', {pollId: pollID, voterId: socket.id, content: this.innerText});
+  }
+
+  function appendVote(option, index) {
+    let newElem = document.createElement("li");
+    newElem.innerHTML = option + ": " + this[option];
+    voteStatus.appendChild(newElem);
+  }
+
+  $('#create-poll').on('click', function() {
+    $('.new-poll').slideDown();
+  });
+
+  $('#deactivate-poll').on('click', function() {
+    var pollId = document.location.href.split('/')[4];
+    socket.send('deactivatePoll', pollId );
+  });
+
+  $('#add-another-option').on('click', function() {
+    $('.poll-options').append('<input type="text" placeholder="Add another possible answer">');
+  });
+
+  $('#vote-deadline').on('change', () => {
+    let $container = $('#time-selector-container');
+    if ($('#vote-deadline').prop('checked')) {
+      $container.slideDown();
+    } else {
+      $container.slideUp();
+    }
+  });
+
+  $('#create-new-poll').on('click', () => {
+    let pollData = { options: [] };
+
+    pollData.question = $('.poll-question input').val();
+    pollData.shareResults = ($('#public-results').prop('checked'));
+
+    if ($('#vote-deadline').prop('checked')) {
+      pollData.expiration = $('#time-selector').val();
+    } else {
+      pollData.expiration = null;
+    }
+
+    $('.poll-options input').each(function() {
+      let option = $(this).val();
+      if (option.length > 0) {
+        pollData.options.push($(this).val());
+      }
+    });
+
+    socket.send('newPoll', pollData);
+  });
+
+  // HELPERS //
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
+});

@@ -3,6 +3,10 @@
   <head>
       <meta charset="utf-8">
       <title>Always Poll Out</title>
+      <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="jquery.simple-dtpicker.js"></script>
+    	<link type="text/css" href="jquery.simple-dtpicker.css" rel="stylesheet" />
+      <script src="/socket.io/socket.io.js"></script>
       <link rel="stylesheet" type='text/css' href="/style.css">
   </head>
   <body>
@@ -27,7 +31,14 @@
       <a id='add-another-option' href="#">Add Another Option</a>
 
       <div class="share-results">
-        <label><input type="checkbox">Share the live results publicly.</label>
+        <label><input id="public-results" type="checkbox">Share the live results publicly.</label>
+      </div>
+
+      <div class="auto-expire">
+        <label><input id="vote-deadline" type="checkbox">Do you want set deadline for vote submissions?</label>
+        <div id="time-selector-container">
+          <span>Select an expiration time (24hr Format): </span><input id="time-selector" type="text">
+        </div>
       </div>
 
       <a id='create-new-poll' href="#">Create Poll</a>
@@ -42,8 +53,12 @@
 
 
     <!-- SCRIPTS -->
-    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
-    <script src="/socket.io/socket.io.js"></script>
+
     <script src="/client.js"></script>
+    <script>$('#time-selector').appendDtpicker({
+      "minuteInterval": 15,
+      "amPmInTimeList": true,
+      "futureOnly": true
+    });</script>
   </body>
 </html>

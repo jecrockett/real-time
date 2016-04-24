@@ -9,6 +9,14 @@
     <h1>public page punks!</h1>
     <div id="status-message"></div>
     <div id="connection-count"></div>
+    <div id="closing-message">
+      <% if(pollData.expiration) { %>
+        <% var date = new Date(pollData.expiration) %>
+        <p>
+          <%= `Voting for this poll will close at ${date.toLocaleString()}` %>
+        </p>
+      <% } %>
+    </div>
     <div id="your-vote"></div>
 
     <div id="choices">
@@ -23,17 +31,11 @@
 
     <div id="vote-status">
       <p>Topic: <%= pollData.question %></p>
-      <% if (votes.length !== 0) { %>
         <ul>
           <% Object.keys(votes).forEach(function(option, index) { %>
             <li><%= option %>: <%= votes[option] %></li>
           <% }); %>
         </ul>
-      <% } else { %>
-        <p>
-          The results of this vote are private.
-        </p>
-      <% } %>
     </div>
 
     <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>

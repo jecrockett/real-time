@@ -9,3 +9,7 @@
 .poll-options input {
   display: block;
 }
+
+#time-selector-container {
+  display: none;
+}
