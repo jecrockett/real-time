@@ -1,4 +1,4 @@
-// APP //
+//////////////// APP SETUP ///////////////////
 
 const express = require('express');
 const app = express();
@@ -12,9 +12,10 @@ app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('polls', {});
+
 var polls = app.get('polls');
 
-
+/////////////////// ROUTES ///////////////////
 app.get('/', (request, response) => {
   response.render('home');
 });
@@ -25,29 +26,28 @@ app.get('/polls/:id', (request, response) => {
     response.cookie('voterId', voterId);
   }
 
-  var pollData = polls[request.params.id];
+  var poll = polls[request.params.id];
 
-  if (pollData.shareResults) {
-    response.render('public-poll', { pollData: pollData, votes: pollData.countVotes(pollData.options, pollData.votes)});
-  } else {
-    response.render('public-poll', { pollData: pollData, votes: {"Note": "The vote administrator has elected to keep the results private."} });
-  }
+  (poll.shareResults) ?
+    response.render('public-poll', { poll: poll, votes: poll.countVotes(poll.options, poll.votes)}) :
+    response.render('public-poll', { poll: poll, votes: {"Note": "The vote administrator has elected to keep the results private."} });
 });
 
 app.get('/polls/:voteId/:adminId', (request, response) => {
   var adminId = request.params.adminId;
   var voteId = request.params.voteId;
-  var pollData = polls[voteId];
-  console.log(pollData.options);
-  if (pollData.adminId === adminId) {
-    response.render('admin-poll', { pollData: pollData, votes: pollData.countVotes(pollData.options, pollData.votes) } );
+  var poll = polls[voteId];
+
+  if (poll.adminId === adminId) {
+    response.render('admin-poll', { poll: poll, votes: poll.countVotes(poll.options, poll.votes) } );
   } else {
     response.sendStatus(404);
   }
 
 });
 
-// SERVER //
+
+/////////////////// START SERVER ///////////////////
 
 if (!module.parent) {
   const http = require('http');
@@ -60,84 +60,97 @@ if (!module.parent) {
 } else {
   module.exports = app;
 }
-//
-// function loggit(thing) {
-//   console.log(thing);
-//   setTimeout(loggit(thing), 1000);
-// }
-// loggit(polls);
 
-// WEBSOCKETS //
+
+/////////////////// WEBSOCKETS ///////////////////
 
 const socketIo = require('socket.io');
 const io = socketIo(server);
 
 io.on('connection', function (socket) {
-  console.log('A user has connected.', io.engine.clientsCount);
-
   socket.on('message', (channel, message) => {
-    if (channel === 'newPoll') {
-      var pollId = generateId(3);
-      var adminId = generateId(3);
-
-      var expiration;
-      if (message.expiration) {
-        expiration = new Date(message.expiration).getTime();
-      } else {
-        expiration = null;
-      }
-
-      var newPoll = new Poll(message.question, message.options, pollId, adminId, message.shareResults, expiration);
-
-      polls[pollId] = newPoll;
-      // function to generate link for admin view
-      var adminLink = function() {
-        return `http://localhost:3000/polls/${pollId}/${adminId}`;
-      };
-      // function to generate link in public view
-      var voterLink = function() {
-        return `http://localhost:3000/polls/${pollId}`;
-      };
-      // save the above into variables, send message back with those
-      socket.emit('links', { admin: adminLink(), voter: voterLink() });
-    }
-
-    if (channel === 'newVote') {
-      var poll = polls[message.pollId];
-
-      if (!poll.expiration || poll.expiration > Date.now()) {
-        poll.votes[message.voterId] = message.content;
-
-        var time = new Date();
-        socket.emit('yourVote', {vote: message.content, time: time.toLocaleString() });
-        console.log(poll.shareResults);
-        if (poll.shareResults) {
-          io.sockets.emit('updatedVote', {pollId: poll.id, votes: poll.countVotes(poll.options, poll.votes) });
-        } else {
-          io.sockets.emit('updatedVote', {pollId: poll.id, votes: {"Note": "The vote administrator has elected to keep the results private."}});
-        }
-
-      } else {
-        var closingTime = new Date(poll.expiration);
-        socket.emit('tooLate', `Sorry, this poll closed at ${closingTime.toLocaleString() }` );
-      }
-    }
-
-    if (channel === 'deactivatePoll') {
-      var pollToDeactivate = polls[message];
-      pollToDeactivate.active = false;
-      socket.emit('pollDeactivated', "Poll deactivated");
-      io.sockets.emit('deactivation', pollToDeactivate);
-    }
-
-    if (channel === 'updateDeadline') {
-      var pollToUpdate = polls[message.pollId];
-      pollToUpdate.expiration = new Date(message.expiration).getTime();
-      socket.emit('confirmDeadline', `The deadline is now ${ new Date(pollToUpdate.expiration).toLocaleString() }.`);
-    }
-  });
-
-  socket.on('disconnect', function () {
-    // delete polls[socket.id];
+    newPoll(channel, message, socket);
+    newVote(channel, message, socket);
+    deactivatePoll(channel, message, socket);
+    updateDeadline(channel, message, socket);
   });
 });
+
+////////////// SOCKET MESSAGE HANDLING /////////////////
+
+function newPoll(channel, message, socket) {
+  if (channel === 'newPoll') {
+    var pollId = generateId(3);
+    var adminId = generateId(3);
+    var expiration = setExpiration(message.expiration);
+
+    var newPoll = new Poll(message.question, message.options, pollId, adminId, message.shareResults, expiration);
+    polls[pollId] = newPoll;
+
+    socket.emit('links', { admin: adminLink(pollId, adminId), voter: voterLink(pollId) });
+  }
+}
+
+function newVote(channel, message, socket) {
+  if (channel === 'newVote') {
+    var poll = polls[message.pollId];
+
+    if (!poll.expiration || poll.expiration > Date.now()) {
+      poll.votes[message.voterId] = message.content;
+
+      socket.emit('yourVote', {vote: message.content, time: new Date().toLocaleString() });
+      sendAvailableVoteData(poll);
+    } else {
+      poll.active = false;
+      var closingTime = new Date(poll.expiration);
+
+      socket.emit('tooLate', `Sorry, this poll closed at ${closingTime.toLocaleString() }` );
+    }
+  }
+}
+
+function deactivatePoll(channel, message, socket) {
+  if (channel === 'deactivatePoll') {
+    var pollToDeactivate = polls[message];
+    pollToDeactivate.active = false;
+
+    socket.emit('pollDeactivated', "Poll deactivated");
+    io.sockets.emit('deactivation', pollToDeactivate);
+  }
+}
+
+function updateDeadline(channel, message, socket) {
+  if (channel === 'updateDeadline') {
+    var pollToUpdate = polls[message.pollId];
+    pollToUpdate.expiration = new Date(message.expiration).getTime();
+
+    socket.emit('confirmDeadline', `The deadline is now ${ new Date(pollToUpdate.expiration).toLocaleString() }.`);
+  }
+}
+
+
+//////////////// HELPERS /////////////////
+
+  function adminLink(pollId, adminId) {
+    return `http://localhost:3000/polls/${pollId}/${adminId}`;
+  }
+
+  function voterLink(pollId) {
+    return `http://localhost:3000/polls/${pollId}`;
+  }
+
+  function setExpiration(value) {
+    if (value) {
+      return new Date(value).getTime();
+    } else {
+      return null;
+    }
+  }
+
+  function sendAvailableVoteData(poll) {
+    if (poll.shareResults) {
+      io.sockets.emit('updatedVote', {pollId: poll.id, votes: poll.countVotes(poll.options, poll.votes) });
+    } else {
+      io.sockets.emit('updatedVote', {pollId: poll.id, votes: {"Note": "The vote administrator has elected to keep the results private."}});
+    }
+  }

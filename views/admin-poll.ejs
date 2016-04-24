@@ -14,8 +14,8 @@
     <div id="status-message"></div>
     <div id="connection-count"></div>
     <div id="expiration-message">
-      <% if(pollData.expiration) { %>
-        <% var date = new Date(pollData.expiration) %>
+      <% if(poll.expiration) { %>
+        <% var date = new Date(poll.expiration) %>
           <%= `Voting for this poll will close at ${date.toLocaleString()}` %>
       <% } else { %>
           There is no current deadling for accepting votes.
@@ -30,7 +30,7 @@
     </div>
 
     <div id="vote-status">
-      <p>Topic: <%= pollData.question %></p>
+      <p>Topic: <%= poll.question %></p>
       <ul>
         <% Object.keys(votes).forEach(function(option, index) { %>
           <li><%= option %>: <%= votes[option] %></li>
