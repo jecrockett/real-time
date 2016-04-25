@@ -10,9 +10,8 @@
     <link rel="stylesheet" type='text/css' href="/style.css">
 </head>
   <body>
-    <h1>admin page bitchezz</h1>
+    <h1>poll admin</h1>
     <div id="status-message"></div>
-    <div id="connection-count"></div>
     <div id="expiration-message">
       <% if(poll.expiration) { %>
         <% var date = new Date(poll.expiration) %>
@@ -23,14 +22,19 @@
     </div>
 
     </div>
-    <a id="deactivate-poll" href="#">Deactivate Poll Now</a>
-    <a id="set-new-deadline" href="#">Set Deadline</a>
+
+    <div class="link-container">
+      <a class="large-button" id="deactivate-poll" href="#">Deactivate Now</a>
+      <a class="large-button" id="set-new-deadline" href="#">Set Deadline</a>
+    </div>
+
     <div id="time-selector-container">
-      <span>Select an expiration time (24hr Format): </span><input id="time-selector" type="text"><a href="#" id="submit-new-expiration">Submit</a>
+      <span>Select an expiration time (24hr Format): </span><input id="time-selector" type="text"><a href="#" class="small-button" id="submit-new-expiration">Submit</a>
     </div>
 
     <div id="vote-status">
       <p>Topic: <%= poll.question %></p>
+      <p>Votes:</p>
       <ul>
         <% Object.keys(votes).forEach(function(option, index) { %>
           <li><%= option %>: <%= votes[option] %></li>

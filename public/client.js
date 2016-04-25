@@ -16,6 +16,8 @@ $(document).ready(function() {
     $('.new-poll').slideUp();
     $('.new-poll').promise().done(function() {
       $('.new-links').slideDown();
+    }).promise().done(function() {
+      $('.create-poll-button-container').fadeIn();
     });
   });
 
@@ -59,7 +61,11 @@ $(document).ready(function() {
   //===== HOME =====//
   $('#create-poll').on('click', function() {
     $('.new-links').fadeOut();
-    $('.new-poll').slideDown();
+    $('.create-poll-button-container').fadeOut();
+    $('.create-poll-button-container').promise().done(function() {
+      $('.new-poll').slideDown();
+    });
+
   });
 
   $('#add-another-option').on('click', function() {
@@ -120,9 +126,9 @@ $(document).ready(function() {
 
   function populatePollOptions(pollData) {
     $('.poll-options input').each(function() {
-      let option = $(this).val();
+      let option = $(this).val().trim();
       if (option.length > 0) {
-        pollData.options.push($(this).val());
+        pollData.options.push(option);
       }
     });
   }

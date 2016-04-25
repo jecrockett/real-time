@@ -1,15 +1,227 @@
-.new-poll {
-  display: none;
+@font-face {
+  font-family: "bernier-distressed";
+  src: url("/fonts/BERNIERDistressed-Regular.otf");
 }
 
-.new-links {
+@font-face {
+  font-family: "bernier";
+  src: url("/fonts/BERNIERRegular-Regular.otf");
+}
+
+/* ===== HOME PAGE ===== */
+
+h1 {
+  font-family: "bernier-distressed";
+  font-size: 80px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #37548b;
+  letter-spacing: 3px;
+}
+
+h3 {
+  font-family: "bernier";
+  text-align: center;
+  margin: 10px 0;
+  letter-spacing: 3px;
+}
+
+.create-poll-button-container {
+  text-align: center;
+  margin: 40px 0;
+}
+
+#create-poll {
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+  letter-spacing: 3px;
+}
+
+.new-poll {
   display: none;
+  width: 60%;
+  height: 480px;
+  overflow: auto;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #37548b;
+}
+
+.poll-question input {
+  width: 60%;
+  font-size: 20px;
+  padding: 20px;
+  border: 2px solid #c87b3c;
+  border-radius: 25px;
+  margin: 30px 0px;
 }
 
 .poll-options input {
   display: block;
+  width: 40%;
+  font-size: 15px;
+  padding: 10px;
+  border: 1px solid #c87b3c;
+  border-radius: 25px;
+  margin: 0 auto;
+  margin-bottom: 5px;
+}
+
+.poll-options {
+  margin-bottom: 15px;
+}
+
+#add-another-option {
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 5px 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+}
+
+.share-results,
+.auto-expire {
+  color: white;
+  text-align: left;
+  padding-left: 210px;
+}
+
+.share-results {
+  margin-top: 20px;
+}
+
+#create-new-poll {
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 10px 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+  letter-spacing: 3px;
+}
+
+.submit-btn-container {
+  margin: 20px;
+}
+
+.new-links {
+  display: none;
+  padding-top: 30px;
+  text-align: center;
+  width: 60%;
+  height: 300px;
+  margin: 0 auto;
+  background-color: #37548b;
+}
+
+.new-links h4 {
+  font-family: 'bernier';
+  color: #c3c3c3;
+}
+
+.new-links p {
+  padding: 10px;
+  color: #c87b3c;
+  font-family: bernier;
+  font-size: 22px;
+  border: 1px solid #c87b3c;
+  border-radius: 6px;
+  width: 75%;
+  margin: 0 auto;
+  background-color: white;
 }
 
 #time-selector-container {
   display: none;
+}
+
+
+/* ====== ADMIN PAGE ====== */
+
+#status-message {
+  text-align: center;
+}
+
+#expiration-message {
+  text-align: center;
+}
+
+.link-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.large-button {
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 10px 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+  letter-spacing: 3px;
+}
+
+.small-button {
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 5px 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+}
+
+#time-selector-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#time-selector {
+  margin-right: 10px;
+}
+
+#vote-status {
+  text-align: center;
+  margin-top: 35px;
+  font-size: 20px;
+}
+
+#vote-status ul {
+  list-style: none;
+  position:relative;
+  left: -10px;
+}
+
+#vote-status li {
+  padding: 5px 0;
+}
+
+
+/* ===== VOTER PAGE ===== */
+
+#choices {
+  text-align: center;
+}
+
+#choices button {
+  text-align: center;
+  text-decoration: none;
+  font-family: "bernier";
+  color: #c87b3c;
+  padding: 10px 15px;
+  border: 1px solid #c87b3c;
+  border-radius: 8px;
+  letter-spacing: 3px;
+  background-color: white;
+  margin: 0 5px;
+}
+
+#your-vote {
+  text-align: center;
+  margin-bottom: 15px;
 }

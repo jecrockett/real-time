@@ -132,13 +132,13 @@ function updateDeadline(channel, message, socket) {
 //////////////// HELPERS /////////////////
 
   function adminLink(pollId, adminId) {
-    return `https://poll-out.herokuapp.com/polls/${pollId}/${adminId}`;
-    // return `http://localhost:3000/polls/${pollId}/${adminId}`;
+    // return `https://poll-out.herokuapp.com/polls/${pollId}/${adminId}`;
+    return `http://localhost:3000/polls/${pollId}/${adminId}`;
   }
 
   function voterLink(pollId) {
-    return `https://poll-out.herokuapp.com/polls/${pollId}`;
-    // return `http://localhost:3000/polls/${pollId}`;
+    // return `https://poll-out.herokuapp.com/polls/${pollId}`;
+    return `http://localhost:3000/polls/${pollId}`;
   }
 
   function setExpiration(value) {

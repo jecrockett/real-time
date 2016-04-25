@@ -2,7 +2,7 @@
 <html>
   <head>
       <meta charset="utf-8">
-      <title>Always Poll Out</title>
+      <title>Poll Out</title>
       <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
       <script type="text/javascript" src="jquery.simple-dtpicker.js"></script>
     	<link type="text/css" href="jquery.simple-dtpicker.css" rel="stylesheet" />
@@ -11,19 +11,18 @@
   </head>
   <body>
 
-    <h1>Always Poll Out</h1>
+    <h1>Poll Out</h1>
+    <h3>don't trust your gut</h3>
 
-    <div>
-      <a id='create-poll' href="#">Create A Poll</a>
+    <div class="create-poll-button-container">
+      <a id='create-poll' href="#">Get Started</a>
     </div>
 
     <div class="new-poll">
-      <h4>Add a Question:</h4>
       <div class="poll-question">
         <input type="text" placeholder="Add your question for polling.">
       </div>
 
-      <h4>Add Answer Options:</h4>
       <div class="poll-options">
         <input type="text" name="option1" placeholder="Add the first possible answer">
         <input type="text" name="option2" placeholder="Add another possible answer">
@@ -31,7 +30,7 @@
       <a id='add-another-option' href="#">Add Another Option</a>
 
       <div class="share-results">
-        <label><input id="public-results" type="checkbox">Share the live results publicly.</label>
+        <label><input id="public-results" type="checkbox">Share the live results publicly?</label>
       </div>
 
       <div class="auto-expire">
@@ -40,15 +39,17 @@
           <span>Select an expiration time (24hr Format): </span><input id="time-selector" type="text">
         </div>
       </div>
-
-      <a id='create-new-poll' href="#">Create Poll</a>
+      <div class="submit-btn-container">
+        <a id='create-new-poll' href="#">Create Poll</a>
+      </div>
     </div>
 
     <div class="new-links">
-      <h4>Here's your admin link:</h4>
-      <p id="admin-link"></p>
-      <h4>And you can send this one to the voters:</h4>
-      <p id="voter-link"></p>
+        <h4>Here's your admin link:</h4>
+        <p id="admin-link"></p>
+        <h4>And you can send this one to the voters:</h4>
+        <p id="voter-link"></p>
+      </div>
     </div>
 
 
