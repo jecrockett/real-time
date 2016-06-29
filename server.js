@@ -49,7 +49,7 @@ app.get('/polls/:voteId/:adminId', (request, response) => {
 
 /////////////////// START SERVER ///////////////////
 
-if (!module.parent) {
+// if (!module.parent) {
   const http = require('http');
 
   const server = http.createServer(app).listen(app.get('port'), () => {
@@ -57,9 +57,7 @@ if (!module.parent) {
   });
 
   module.exports = server;
-} else {
-  module.exports = app;
-}
+// }
 
 
 /////////////////// WEBSOCKETS ///////////////////
